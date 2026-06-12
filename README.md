@@ -1,3 +1,6 @@
+## 🚀 Live Demo
+https://webchat-rag-lyy79esusjoc2xrwaclzta.streamlit.app/
+
 # Website RAG Chatbot
 
 A simple RAG (Retrieval-Augmented Generation) chatbot that lets you ask questions about the content of any website. Built with LangChain, FAISS, HuggingFace embeddings, and Groq's LLM, with a Streamlit web interface.
