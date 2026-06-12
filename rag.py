@@ -39,8 +39,8 @@ load_dotenv()
 
 def ask_question(vs, question):
     llm = ChatGroq(
-    groq_api_key=os.getenv("GROQ_API_KEY"),
-    model_name="llama-3.1-8b-instant"
+        groq_api_key=os.getenv("GROQ_API_KEY"),
+        model_name="llama-3.1-8b-instant"
 )
 
     docs = vs.similarity_search(question, k=4)
