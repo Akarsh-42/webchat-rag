@@ -50,6 +50,4 @@ streamlit run app.py
 
 - Support for multiple URLs 
 - Conversation history / follow-up questions
-- Source citation for answer
-- Support for PDF/file uploads, not just websites
 - Streaming responses for faster perceived speed
