@@ -29,6 +29,27 @@ def build_vectorstore(url):
     vectorstore = FAISS.from_documents(chunks, embeddings)
     return vectorstore
 
+def build_vectorstore_from_file(file_path, suffix):
+    suffix = suffix.lower()
+    if suffix == ".pdf":
+        from langchain_community.document_loaders import PyPDFLoader
+        loader = PyPDFLoader(file_path)
+    elif suffix == ".txt":
+        from langchain_community.document_loaders import TextLoader
+        loader = TextLoader(file_path, encoding="utf-8")
+    elif suffix == ".docx":
+        from langchain_community.document_loaders import Docx2txtLoader
+        loader = Docx2txtLoader(file_path)
+    else:
+        raise ValueError(f"Unsupported file type: {suffix}")
+    docs = loader.load()
+    chunks = split_documents(docs)
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+    vectorstore = FAISS.from_documents(chunks, embeddings)
+    return vectorstore
+
 import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
