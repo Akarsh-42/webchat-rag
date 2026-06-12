@@ -23,11 +23,9 @@ from langchain_community.vectorstores import FAISS
 def build_vectorstore(url):
     docs = load_website(url)
     chunks = split_documents(docs)
-
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
-
     vectorstore = FAISS.from_documents(chunks, embeddings)
     return vectorstore
 
@@ -41,11 +39,9 @@ def ask_question(vs, question):
     llm = ChatGroq(
         groq_api_key=os.getenv("GROQ_API_KEY"),
         model_name="llama-3.1-8b-instant"
-)
-
+    )
     docs = vs.similarity_search(question, k=4)
     context = "\n\n".join(d.page_content for d in docs)
-
     prompt = f"""Answer the question based only on the context below.
 
 Context:
@@ -53,7 +49,6 @@ Context:
 
 Question: {question}
 Answer:"""
-
     response = llm.invoke(prompt)
     return response.content
 
