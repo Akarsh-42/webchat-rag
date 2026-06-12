@@ -37,12 +37,11 @@ from langchain_groq import ChatGroq
 
 load_dotenv()
 
-llm = ChatGroq(
-    groq_api_key=os.getenv("GROQ_API_KEY"),
-    model_name="llama-3.1-8b-instant"
-)
-
 def ask_question(vs, question):
+    llm = ChatGroq(
+        groq_api_key=os.getenv("GROQ_API_KEY"),
+        model_name="llama-3.1-8b-instant"
+    )    
     docs = vs.similarity_search(question, k=4)
     context = "\n\n".join(d.page_content for d in docs)
 
