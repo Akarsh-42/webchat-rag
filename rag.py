@@ -23,11 +23,30 @@ from langchain_community.vectorstores import FAISS
 def build_vectorstore(url):
     docs = load_website(url)
     chunks = split_documents(docs)
-
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
+    vectorstore = FAISS.from_documents(chunks, embeddings)
+    return vectorstore
 
+def build_vectorstore_from_file(file_path, suffix):
+    suffix = suffix.lower()
+    if suffix == ".pdf":
+        from langchain_community.document_loaders import PyPDFLoader
+        loader = PyPDFLoader(file_path)
+    elif suffix == ".txt":
+        from langchain_community.document_loaders import TextLoader
+        loader = TextLoader(file_path, encoding="utf-8")
+    elif suffix == ".docx":
+        from langchain_community.document_loaders import Docx2txtLoader
+        loader = Docx2txtLoader(file_path)
+    else:
+        raise ValueError(f"Unsupported file type: {suffix}")
+    docs = loader.load()
+    chunks = split_documents(docs)
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
     vectorstore = FAISS.from_documents(chunks, embeddings)
     return vectorstore
 
@@ -41,10 +60,9 @@ def ask_question(vs, question):
     llm = ChatGroq(
         groq_api_key=os.getenv("GROQ_API_KEY"),
         model_name="llama-3.1-8b-instant"
-    )    
+    )
     docs = vs.similarity_search(question, k=4)
     context = "\n\n".join(d.page_content for d in docs)
-
     prompt = f"""Answer the question based only on the context below.
 
 Context:
@@ -52,7 +70,6 @@ Context:
 
 Question: {question}
 Answer:"""
-
     response = llm.invoke(prompt)
     return response.content
 
